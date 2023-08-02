@@ -3,7 +3,7 @@ const httpServer = require('http').createServer(app);
 const io = require('socket.io')(httpServer, {
     cors: { origin: '*' }
 });
-
+require('dotenv').config();
 const port = process.env.PORT || 3000;
 
 io.on('connection', (socket) => {
@@ -16,7 +16,6 @@ io.on('connection', (socket) => {
             return;
         }
     });
-
 
     socket.on('disconnect', () => {
         console.log('a user disconnected!');
