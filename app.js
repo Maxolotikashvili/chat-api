@@ -5,13 +5,20 @@ const io = require('socket.io')(httpServer, {
 });
 require('dotenv').config();
 const port = process.env.PORT || 3000;
+let usersList = [];
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-
+    socket.on('user', (user) => {
+        usersList.push({name: user, id: socket.id});
+        io.emit('userlist', usersList);
+    })
+    
     socket.on('message', (message) => {
+        const currentUser = usersList.find((user) => user.id === socket.id);
+
         if (message !== '') {
-            io.emit('message', message);
+            io.emit('data', {user: currentUser.name, message: message, id: currentUser.id});
         } else {
             return;
         }
@@ -19,6 +26,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('a user disconnected!');
+        // usersList = [];
     });
 });
 
